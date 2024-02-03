@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Theremin</title>
+  <link rel="stylesheet" href="./index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+  <script src="./index.js" defer></script>
+</head>
+<body>
+  <div class="container">
+    <h1>HopperHacks 2024 Theremin</h1>
+    <p class="subheading">
+      Using JavaScript to simulate a theremin.
+    </p>
+    <div class="rectangle" id = "simScreen">
+        <div id="pitch"></div>
+        <div id="screen"></div>
+        <div id="volume"></div>
+    </div>
+    <div class="action">
+        <button onclick="toggleSimulator()" id="toggleSimBtn">Turn Simulator On</button>
+        <button onclick="toggleSound()" id="toggleSoundBtn">Turn Sound On</button>
+    </div>
+    <div class="circle" id="circleID"></div>
+  </div>
+</body>
+</html>
