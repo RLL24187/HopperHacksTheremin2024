@@ -2,6 +2,7 @@ body {
     font-family: 'Itim';font-size: 22px;
     cursor: url('https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTEwL3JtNDY3YmF0Y2gyLXN0YXItMDAxXzEucG5n.png');
     pointer-events: auto;
+    background-color:aliceblue;
 }
 
 .container {

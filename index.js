@@ -283,8 +283,25 @@ if ("serial" in navigator) {
 }
 
 function selectNote(angle){
-    let noteSelect = Math.floor(angle / 20);
-    console.log(noteSelect);
+    console.log(angle);
+    if (angle > 140){
+        return "C4";
+    } else if (angle > 120){
+        return "B3";
+    } else if (angle > 95){
+        return "A3";
+    } else if (angle > 65){
+        return "G3";
+    } else if (angle > 49){
+        return "F3";
+    } else if (angle > 33) {
+        return "E3";
+    } else if (angle > 15){
+        return "D3";
+    } else {
+        return "C3";
+    }
+    /*
     switch (noteSelect){
         case 0:
             return "C3";
@@ -302,6 +319,15 @@ function selectNote(angle){
             return "B3";
         default: 
             return "C4";
+    }
+    */
+}
+
+function selectVolume(dist){
+    if (dist > 150){
+        return 0;
+    } else {
+        return 0.5;
     }
 }
 
@@ -341,7 +367,6 @@ document.querySelector('button').addEventListener('click', async () => {
                 // console.log("Distance: %s, Angle: %s\n", point.r, point.angle);
                 console.log("Distance: %d, Angle: %d\n", point.r, point.angle);
                 // point.angle = mapToRange(point.angle, 1, 160, 150, w);
-                point.r = mapToRange(point.r, 60, 511, 250, h);
                 polarToCartesian(point);
                 console.log("X: %.2f, Y: %.2f\n", point.x, point.y);
                 ctx.beginPath(); 
@@ -362,9 +387,10 @@ document.querySelector('button').addEventListener('click', async () => {
                 // Draws the line. 
                 ctx.stroke(); 
                 console.log(point.angle);
+                console.log(point.r);
                 if (point.angle > 0) {
                     synth.triggerRelease();
-                    synth.triggerAttack(selectNote(point.angle), 0);
+                    synth.triggerAttack(selectNote(point.angle), 0, selectVolume(point.r));
                 }
                 // if (point.y > 0 && point.x  > 0) {
                 //     synth.triggerAttackRelease(point.y, "8n", point.x / w);
