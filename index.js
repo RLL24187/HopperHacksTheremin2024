@@ -278,8 +278,82 @@ function parseData(data) {
 }
 
 // Serial stuff -------------------------------------------------
+if ("serial" in navigator) {
+    console.log("yes");
+}
 
-// socket.on('data', function(data) {
-//     console.log(data);
-//     parseData(data);
-// });
+// const reader = port.readable.getReader();
+document.querySelector('button').addEventListener('click', async () => {
+    // // Prompt user to select any serial port.
+    const port = await navigator.serial.requestPort();
+    // Get all serial ports the user has previously granted the website access to.
+    // const ports = await navigator.serial.getPorts();
+    let index = 0;
+
+    // Wait for the serial port to open.
+    await port.open({ baudRate: 9600 });
+    while (port.readable) {
+        const reader = port.readable.getReader();
+        let data = "";
+
+        try {
+          while (true) {
+            const { value, done } = await reader.read();
+            if (done) {
+              // Allow the serial port to be closed later.
+              reader.releaseLock();
+              break;
+            }
+            // if (value) {
+            //   console.log(value);
+            // }
+            data = Utf8ArrayToStr(value);
+            console.log(data);
+            point.r = Number(data.substring(data.indexOf("ce\":")+4, data.indexOf(",")));
+            point.angle = Number(data.substring(data.indexOf("le\":")+4, data.indexOf("}")));
+            console.log("Distance: %s, Angle: %s\n", point.r, point.angle);
+            // point.r = map(point.r, 1, 160, 0, w);
+            // point.angle = map(point.angle, 6, 512, 250, h);
+            // polarToCartesian(point);
+            // console.log("X: %.2f, Y: %.2f\n", point.x, point.y);
+            
+          }
+        } catch (error) {
+          // TODO: Handle non-fatal read error.
+        }
+      }
+});
+  
+function Utf8ArrayToStr(array) {
+    var out, i, len, c;
+    var char2, char3;
+
+    out = "";
+    len = array.length;
+    i = 0;
+    while(i < len) {
+    c = array[i++];
+    switch(c >> 4)
+    { 
+      case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
+        // 0xxxxxxx
+        out += String.fromCharCode(c);
+        break;
+      case 12: case 13:
+        // 110x xxxx   10xx xxxx
+        char2 = array[i++];
+        out += String.fromCharCode(((c & 0x1F) << 6) | (char2 & 0x3F));
+        break;
+      case 14:
+        // 1110 xxxx  10xx xxxx  10xx xxxx
+        char2 = array[i++];
+        char3 = array[i++];
+        out += String.fromCharCode(((c & 0x0F) << 12) |
+                       ((char2 & 0x3F) << 6) |
+                       ((char3 & 0x3F) << 0));
+        break;
+    }
+    }
+
+    return out;
+}
