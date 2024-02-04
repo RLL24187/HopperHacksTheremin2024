@@ -282,6 +282,29 @@ if ("serial" in navigator) {
     console.log("yes");
 }
 
+function selectNote(angle){
+    let noteSelect = Math.floor(angle / 20);
+    console.log(noteSelect);
+    switch (noteSelect){
+        case 0:
+            return "C3";
+        case 1:
+            return "D3";
+        case 2:
+            return "E3";
+        case 3:
+            return "F3";
+        case 4:
+            return "G3";
+        case 5:
+            return "A3";
+        case 6:
+            return "B3";
+        default: 
+            return "C4";
+    }
+}
+
 // const reader = port.readable.getReader();
 document.querySelector('button').addEventListener('click', async () => {
     // // Prompt user to select any serial port.
@@ -317,7 +340,7 @@ document.querySelector('button').addEventListener('click', async () => {
                 point.angle = Number(data.substring(data.indexOf("le\":")+4, data.indexOf("}")));
                 // console.log("Distance: %s, Angle: %s\n", point.r, point.angle);
                 console.log("Distance: %d, Angle: %d\n", point.r, point.angle);
-                point.angle = mapToRange(point.angle, 1, 160, 150, w);
+                // point.angle = mapToRange(point.angle, 1, 160, 150, w);
                 point.r = mapToRange(point.r, 60, 511, 250, h);
                 polarToCartesian(point);
                 console.log("X: %.2f, Y: %.2f\n", point.x, point.y);
@@ -338,8 +361,10 @@ document.querySelector('button').addEventListener('click', async () => {
                     
                 // Draws the line. 
                 ctx.stroke(); 
+                console.log(point.angle);
                 if (point.angle > 0) {
-                    synth.triggerAttackRelease(point.angle, "16n", point.distance / 160);
+                    synth.triggerRelease();
+                    synth.triggerAttack(selectNote(point.angle), 0);
                 }
                 // if (point.y > 0 && point.x  > 0) {
                 //     synth.triggerAttackRelease(point.y, "8n", point.x / w);
@@ -352,6 +377,7 @@ document.querySelector('button').addEventListener('click', async () => {
           }
         } catch (error) {
           // TODO: Handle non-fatal read error.
+          reader.releaseLock();
         }
       }
 });
@@ -389,3 +415,4 @@ function Utf8ArrayToStr(array) {
 
     return out;
 }
+
