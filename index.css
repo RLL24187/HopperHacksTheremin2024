@@ -1,8 +1,15 @@
+body {
+    font-family: 'Itim';font-size: 22px;
+    cursor: url('https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTEwL3JtNDY3YmF0Y2gyLXN0YXItMDAxXzEucG5n.png');
+    pointer-events: auto;
+}
+
 .container {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    cursor: auto;
   }
   
   .rectangle {
@@ -10,6 +17,14 @@
     width: 80vw;
     height: 80vh;
     /* border-radius: 50%; */
+  }
+
+  #simScreen {
+    cursor:url('https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTEwL3JtNDY3YmF0Y2gyLXN0YXItMDAxXzEucG5n.pnghttps://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTEwL3JtNDY3YmF0Y2gyLXN0YXItMDAxXzEucG5n.png'), crosshair, auto;
+  }
+
+  #canvas {
+    border: 1px solid #000000;
   }
   
   .action {

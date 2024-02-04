@@ -5,24 +5,28 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Theremin</title>
+  <link href='https://fonts.googleapis.com/css?family=Itim' rel='stylesheet'>
   <link rel="stylesheet" href="./index.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+  <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
   <script src="./index.js" defer></script>
 </head>
 <body>
   <div class="container">
     <h1>HopperHacks 2024 Theremin</h1>
     <p class="subheading">
-      Using JavaScript to simulate a theremin.
+      This web app uses vanilla JavaScript to simulate a Theremin. It interfaces with a Raspberry Pico connected to a LIDAR sensor. 
+      The closest point recorded on the LIDAR is used to determine the pitch and volume played. 
     </p>
+    <canvas id="canvas"></canvas>
+    <div class="action">
+        <button onclick="toggleSimulator()" id="toggleSimBtn">Turn Simulator On</button>
+        <button onclick="toggleSound()" id="toggleSoundBtn">Turn Sound On</button>
+        <button onclick="cMajor()" id="cMajorBtn">Play C Major</button>
+    </div>
     <div class="rectangle" id = "simScreen">
         <div id="pitch"></div>
         <div id="screen"></div>
         <div id="volume"></div>
-    </div>
-    <div class="action">
-        <button onclick="toggleSimulator()" id="toggleSimBtn">Turn Simulator On</button>
-        <button onclick="toggleSound()" id="toggleSoundBtn">Turn Sound On</button>
     </div>
     <div class="circle" id="circleID"></div>
   </div>
