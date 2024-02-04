@@ -317,8 +317,8 @@ document.querySelector('button').addEventListener('click', async () => {
                 point.angle = Number(data.substring(data.indexOf("le\":")+4, data.indexOf("}")));
                 // console.log("Distance: %s, Angle: %s\n", point.r, point.angle);
                 console.log("Distance: %d, Angle: %d\n", point.r, point.angle);
-                point.r = mapToRange(point.r, 1, 160, 0, w);
-                point.angle = mapToRange(point.angle, 6, 512, 250, h);
+                point.angle = mapToRange(point.angle, 1, 160, 0, w);
+                point.r = mapToRange(point.r, 60, 511, 250, h);
                 polarToCartesian(point);
                 console.log("X: %.2f, Y: %.2f\n", point.x, point.y);
                 ctx.beginPath(); 
@@ -338,6 +338,12 @@ document.querySelector('button').addEventListener('click', async () => {
                     
                 // Draws the line. 
                 ctx.stroke(); 
+                if (point.angle > 0) {
+                    synth.triggerAttackRelease(point.angle, "32n");
+                }
+                // if (point.y > 0 && point.x  > 0) {
+                //     synth.triggerAttackRelease(point.y, "8n", point.x / w);
+                // }
             }
             // if (value) {
             //   console.log(value);
