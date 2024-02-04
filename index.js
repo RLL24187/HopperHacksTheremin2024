@@ -183,8 +183,8 @@ document.onmousemove = (event) => {
 // angle [0, 159]
 // 0-250
 function polarToCartesian(point) {
-    point.x = r * Math.cos(point.angle);
-    point.y = r * Math.sin(point.angle);
+    point.x = point.r * Math.cos(point.angle * 2 * Math.PI / 180);
+    point.y = point.r * Math.sin(point.angle * 2 * Math.PI / 180);
 }
 
 function cartesianToPolar(point) {
@@ -293,7 +293,10 @@ document.querySelector('button').addEventListener('click', async () => {
     // Wait for the serial port to open.
     await port.open({ baudRate: 9600 });
     while (port.readable) {
-        const reader = port.readable.getReader();
+        let reader;
+        if (!reader) {
+            reader = port.readable.getReader();
+        }
         let data = "";
 
         try {
@@ -304,18 +307,41 @@ document.querySelector('button').addEventListener('click', async () => {
               reader.releaseLock();
               break;
             }
+            data = Utf8ArrayToStr(value);
+            if (data.indexOf("ce\":") !== -1 
+            && data.indexOf(",") !== -1
+            && data.indexOf("le\":") !== -1 
+            && data.indexOf("}") !== -1) {
+                // console.log(data);
+                point.r = Number(data.substring(data.indexOf("ce\":")+4, data.indexOf(",")));
+                point.angle = Number(data.substring(data.indexOf("le\":")+4, data.indexOf("}")));
+                // console.log("Distance: %s, Angle: %s\n", point.r, point.angle);
+                console.log("Distance: %d, Angle: %d\n", point.r, point.angle);
+                point.r = mapToRange(point.r, 1, 160, 0, w);
+                point.angle = mapToRange(point.angle, 6, 512, 250, h);
+                polarToCartesian(point);
+                console.log("X: %.2f, Y: %.2f\n", point.x, point.y);
+                ctx.beginPath(); 
+    
+                ctx.lineWidth = 5; 
+                ctx.lineCap = 'round'; 
+                
+                ctx.strokeStyle = 'blue'; 
+                
+                // The cursor to start drawing 
+                // moves to this coordinate 
+                ctx.moveTo(point.x, point.y); 
+                
+                // A line is traced from start 
+                // coordinate to this coordinate 
+                ctx.lineTo(point.x, point.y); 
+                    
+                // Draws the line. 
+                ctx.stroke(); 
+            }
             // if (value) {
             //   console.log(value);
             // }
-            data = Utf8ArrayToStr(value);
-            console.log(data);
-            point.r = Number(data.substring(data.indexOf("ce\":")+4, data.indexOf(",")));
-            point.angle = Number(data.substring(data.indexOf("le\":")+4, data.indexOf("}")));
-            console.log("Distance: %s, Angle: %s\n", point.r, point.angle);
-            // point.r = map(point.r, 1, 160, 0, w);
-            // point.angle = map(point.angle, 6, 512, 250, h);
-            // polarToCartesian(point);
-            // console.log("X: %.2f, Y: %.2f\n", point.x, point.y);
             
           }
         } catch (error) {
