@@ -19,6 +19,7 @@ int bufferIndex = 0;
 int parseIndex = 0;
 bool wrap = false;
 
+// Stores information from lidar in buffer
 void uartInterrupt(){
     buffer[bufferIndex] = uart_getc(UART_ID);
     if (bufferIndex == BUFFER_SIZE - 1){
@@ -38,18 +39,20 @@ int main(){
      uart_set_format(UART_ID, DATA_BITS, STOP_BITS, PARITY);
      uart_set_fifo_enabled(UART_ID, false);
 
+    // Sets up interrupt for reading information from lidar
      irq_set_exclusive_handler(21, &uartInterrupt);
      irq_set_enabled(21, true);
      uart_set_irq_enables(UART_ID, true, false);
 
      sleep_ms(500);
+     // Sends a command to check communication is working
      uint8_t command[9] = {0xA5, 0xA5, 0xA5, 0xA5, 0x00, 0x60, 0x00, 0x00, 0x60};
      uart_write_blocking(UART_ID, command, 9);
 
      bool check = true;
-
+    // Waits for a full response
      while (buffer[8] != 0x61){}
-
+    // Checks if response is good
      for (int i = 0; i < 8; i++){
         if (i == 4){
             if (buffer[i] != 0x01){check = false;}
@@ -58,6 +61,7 @@ int main(){
         }
      }
 
+    // Flash built-in led to show everything is working
      if (check) {
         gpio_init(PICO_DEFAULT_LED_PIN);
         gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
@@ -71,32 +75,41 @@ int main(){
      int shortestIndex = 0;
      int shortestDistance = 1000000;
 
+    // Changes command array to send command to start scanning
      command[5] = 0x63;
      command[8] = 0x63;
      bufferIndex = 0;
+    // Sends command
      uart_write_blocking(UART_ID, command, 9);
-     
+    
+    // Waits for response that lidar has started scanning
      while (buffer[8] != 0x64){}
      sleep_ms(250);
+    // Resets buffer
      bufferIndex = 0;
      gpio_put(PICO_DEFAULT_LED_PIN, 1);
 
      while (1){
+        // Waits for a full packet
         if (bufferIndex == 331){
             for (int i = 10; i < 330; i += 2){
+                // Calculates distance from each data point
                 distance = (buffer[i] | ((buffer[i + 1] << 8))) & 0x01ff;
                 intensity = buffer[i + 1] >> 1;
+                // Calculates what data point information is from
                 int j = (i - 8) / 2;
                 if (distance < shortestDistance && distance > 5){
                     shortestDistance = distance;
                     shortestIndex = j;
                 }
             }
+            // Changes indices of data points so it goes from 1-160 left to right
             if (shortestIndex < 81){
                 shortestIndex += 80;
             } else {
                 shortestIndex -= 80;
             }
+            // Prints out shortest distance and resets variables
             printf("{\"distance\":%d,\"angle\":%d}", shortestDistance, shortestIndex);
             bufferIndex = 0;
             shortestDistance = 1000000;
